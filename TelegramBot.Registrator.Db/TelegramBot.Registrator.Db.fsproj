@@ -52,20 +52,51 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Library1.fs" />
+    <Content Include="App.config" />
     <Content Include="packages.config" />
+    <None Include="rzsql.json" />
+    <None Include="V1.model.sql" />
     <Compile Include="Models\User.fs" />
+    <Compile Include="Services\UserService.fs" />
+    <Compile Include="Migrator.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FParsec">
+      <HintPath>..\packages\FParsec.1.0.2\lib\net40-client\FParsec.dll</HintPath>
+    </Reference>
+    <Reference Include="FParsec-Pipes">
+      <HintPath>..\packages\FParsec-Pipes.0.4.0\lib\net45\FParsec-Pipes.dll</HintPath>
+    </Reference>
+    <Reference Include="FParsecCS">
+      <HintPath>..\packages\FParsec.1.0.2\lib\net40-client\FParsecCS.dll</HintPath>
+    </Reference>
+    <Reference Include="LicenseToCIL">
+      <HintPath>..\packages\LicenseToCIL.0.3.0\lib\net45\LicenseToCIL.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core">
       <Name>FSharp.Core</Name>
       <AssemblyName>FSharp.Core.dll</AssemblyName>
       <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\FSharp\.NETFramework\v4.0\$(TargetFSharpCoreVersion)\FSharp.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Rezoom">
+      <HintPath>..\packages\Rezoom.0.4.2\lib\net45\Rezoom.dll</HintPath>
+    </Reference>
+    <Reference Include="Rezoom.SQL.Compiler">
+      <HintPath>..\packages\Rezoom.SQL.Provider.0.7.2.40976\lib\net45\Rezoom.SQL.Compiler.dll</HintPath>
+    </Reference>
+    <Reference Include="Rezoom.SQL.Mapping">
+      <HintPath>..\packages\Rezoom.SQL.Provider.0.7.2.40976\lib\net45\Rezoom.SQL.Mapping.dll</HintPath>
+    </Reference>
+    <Reference Include="Rezoom.SQL.Provider">
+      <HintPath>..\packages\Rezoom.SQL.Provider.0.7.2.40976\lib\net45\Rezoom.SQL.Provider.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
