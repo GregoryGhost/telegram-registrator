@@ -12,6 +12,7 @@ let main argv =
         Name = "Lite";
         Patronymic = "Kira";
         DateOfBirth = DateTime.Now    }
-    us.Registrate newUser |> ignore
+    let idTelegramUser = 11
+    us.Registrate(idTelegramUser, newUser) |> ignore
     us.PrintAllUsers
     0 // return an integer exit code
