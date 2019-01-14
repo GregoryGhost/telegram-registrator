@@ -17,5 +17,9 @@ let main argv =
         printfn "Пользователь с id=%d успешно зарегистрирован." idTelegramUser
     else
         printfn "Пользователь с id=%d уже зарегистрирован, удалите его регистрационные данные." idTelegramUser
+        let userData =
+            us.GetUserById idTelegramUser
+        printfn "Регистрационные данные %A пользователя с id=%d." userData idTelegramUser
+    printfn "-------------------------------"
     us.PrintAllUsers
     0 // return an integer exit code

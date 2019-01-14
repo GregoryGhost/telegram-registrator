@@ -5,7 +5,6 @@ open TelegramBot.Registrator.Db.Models
 open System
 open Rezoom.SQL.Synchronous
 
-
 type private GetAllUsers = SQL<"
         select * from Users
     ">
@@ -22,8 +21,15 @@ type private GetRegistratedUser = SQL<"""
     """>
 
 
-type private GetRegistratedTelegramUser = SQL<"""
-        SELECT [IdTelegramUser]
+type private GetRegistratedUserById = SQL<"""
+        SELECT * FROM Users
+	    WHERE [Id] = @IdUser
+        LIMIT 1
+    """>
+
+
+type private GetRegistratedUserByTelegramUser = SQL<"""
+        SELECT [IdUser]
         FROM TelegramUsers
 	    WHERE [IdTelegramUser] = @IdTelegramUser
         LIMIT 1
@@ -69,8 +75,13 @@ type UserService() =
             .Command(user |> getUserData)
             .ExecuteTryExactlyOne(context)
 
-    let getRegistratedTelegramUser idTelegramUser =
-        GetRegistratedTelegramUser
+    let getRegisratedUserById idUser =
+        GetRegistratedUserById
+            .Command(idUser)
+            .ExecuteTryExactlyOne(context)
+
+    let getRegistratedUserByTelegramUser idTelegramUser =
+        GetRegistratedUserByTelegramUser
             .Command(idTelegramUser)
             .ExecuteTryExactlyOne(context)
        
@@ -80,6 +91,12 @@ type UserService() =
             .Execute(context)
     
     let toUser(dbItem: GetAllUsers.Row) = {
+            SurName = dbItem.Surname;
+            Name = dbItem.Name;
+            Patronymic = dbItem.Patronymic;
+            DateOfBirth = dbItem.DateOfBirth }
+
+    let fromUserRecord(dbItem: GetRegistratedUserById.Row) = {
             SurName = dbItem.Surname;
             Name = dbItem.Name;
             Patronymic = dbItem.Patronymic;
@@ -97,7 +114,7 @@ type UserService() =
             let res = 
                 getRegistratedUser user
             let registeredTelegramUser = 
-                getRegistratedTelegramUser idTelegramUser
+                getRegistratedUserByTelegramUser idTelegramUser
             Option.isSome res
                 || Option.isSome registeredTelegramUser
         if checkRegisteredUser then
@@ -108,13 +125,17 @@ type UserService() =
             (idTelegramUser, idUser) ||> setUserForTelegramUser
             true
 
-    member __.GetUserById(idUser: int): User =
-        let newUser = {
-            SurName = "Yugami";
-            Name = "Lite";
-            Patronymic = "Kira";
-            DateOfBirth = DateTime.Now    }
-        newUser
+    /// Получить пользовательские данные по идентификатору телеграмм пользователя.
+    member __.GetUserById(idTelegramUser: int): User option =
+        let idUser =
+            idTelegramUser
+            |> getRegistratedUserByTelegramUser
+            |> Option.bind (fun x -> Some x.IdUser)
+        let user = 
+            idUser
+            |> Option.bind (fun x -> getRegisratedUserById x)
+            |> Option.bind (fun x -> x |> fromUserRecord |> Some)
+        user
 
     member __.Remove(idUser: int) =
         ()
