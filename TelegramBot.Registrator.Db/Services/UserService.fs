@@ -50,6 +50,14 @@ type private SetUserForTelegramUser = SQL<"""
         VALUES (@IdTelegramUser, @IdUser)
     """>
 
+
+type private RemoveUserForTelegramUser = SQL<"""
+        DELETE FROM Users
+        WHERE [Id] IN (SELECT [IdUser]
+            FROM TelegramUsers
+            WHERE [IdTelegramUser] = @IdTelegramUser);
+    """>
+
 /// Сервис по работе с телеграммовскими пользовательскими данными.
 type UserService() = 
     let context = new ConnectionContext()
@@ -136,6 +144,9 @@ type UserService() =
             |> Option.bind (fun x -> getRegisratedUserById x)
             |> Option.bind (fun x -> x |> fromUserRecord |> Some)
         user
-
-    member __.Remove(idUser: int) =
-        ()
+    
+    /// Удалить пользовательские данные по идентификатору телеграмм пользователя.
+    member __.Remove(idTelegramUser: int) =
+        RemoveUserForTelegramUser
+            .Command(idTelegramUser)
+            .Execute(context)
