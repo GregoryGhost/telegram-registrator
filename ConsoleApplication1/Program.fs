@@ -13,6 +13,9 @@ let main argv =
         Patronymic = "Kira";
         DateOfBirth = DateTime.Now    }
     let idTelegramUser = 11
-    us.Registrate(idTelegramUser, newUser) |> ignore
+    if us.Registrate(idTelegramUser, newUser) then
+        printfn "Пользователь с id=%d успешно зарегистрирован." idTelegramUser
+    else
+        printfn "Пользователь с id=%d уже зарегистрирован, удалите его регистрационные данные." idTelegramUser
     us.PrintAllUsers
     0 // return an integer exit code

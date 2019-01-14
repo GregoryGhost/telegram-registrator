@@ -22,6 +22,14 @@ type private GetRegistratedUser = SQL<"""
     """>
 
 
+type private GetRegistratedTelegramUser = SQL<"""
+        SELECT [IdTelegramUser]
+        FROM TelegramUsers
+	    WHERE [IdTelegramUser] = @IdTelegramUser
+        LIMIT 1
+    """>
+
+
 type private SetUser = SQL<"""
         insert into Users 
         ( Surname, Name, Patronymic, DateOfBirth)
@@ -60,6 +68,11 @@ type UserService() =
         GetRegistratedUser
             .Command(user |> getUserData)
             .ExecuteTryExactlyOne(context)
+
+    let getRegistratedTelegramUser idTelegramUser =
+        GetRegistratedTelegramUser
+            .Command(idTelegramUser)
+            .ExecuteTryExactlyOne(context)
        
     let setUserForTelegramUser idTelegramUser idUser =
         SetUserForTelegramUser
@@ -78,14 +91,15 @@ type UserService() =
         for userDbItem in users do
             printfn "User: %A" (userDbItem |> toUser)
 
-    /// Зарегистировать пользовательские данные для телеграмм пользователя.
+    /// Зарегистрировать пользовательские данные для телеграмм пользователя.
     member __.Registrate(idTelegramUser: int, user: User): bool =
         let checkRegisteredUser = 
-                let res = getRegistratedUser user
-                Option.isSome res
-        // TODO: добавить проверку есть ли связка
-        //  телеграмм пользователь и пользовательские данные
-        //  в таблице TelegramUsers.
+            let res = 
+                getRegistratedUser user
+            let registeredTelegramUser = 
+                getRegistratedTelegramUser idTelegramUser
+            Option.isSome res
+                || Option.isSome registeredTelegramUser
         if checkRegisteredUser then
             false
         else
