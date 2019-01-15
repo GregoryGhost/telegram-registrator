@@ -20,6 +20,9 @@ let main argv =
         let userData =
             us.GetUserById idTelegramUser
         printfn "Регистрационные данные %A пользователя с id=%d." userData idTelegramUser
+        printfn "Попытка удалить регистрационные данные для пользователя с id=%d." idTelegramUser
+        us.Remove idTelegramUser
+        printfn "Данные успешно удалены"
     printfn "-------------------------------"
     us.PrintAllUsers
     0 // return an integer exit code
