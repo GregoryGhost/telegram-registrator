@@ -11,6 +11,9 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramBot.TestRegistrator
 	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramBot.Regitstrator.IntegrationTests", "TelegramBot.Regitstrator.IntegrationTests\TelegramBot.Regitstrator.IntegrationTests.fsproj", "{C0437D0B-F425-48AE-A254-2047DB88982D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D35858C0-6766-4C5B-B7EA-978854F3C0DD} = {D35858C0-6766-4C5B-B7EA-978854F3C0DD}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

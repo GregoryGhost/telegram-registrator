@@ -39,7 +39,7 @@ type private GetRegistratedUserByTelegramUser = SQL<"""
 type private SetUser = SQL<"""
         insert into Users 
         ( Surname, Name, Patronymic, DateOfBirth)
-        values (@Surname, @Name, @Patronymic, @Birth);
+        values (@SurName, @Name, @Patronymic, @DateOfBirth);
         select scope_identity() as InsertedId;
     """>
 
@@ -61,12 +61,12 @@ type private RemoveUserForTelegramUser = SQL<"""
 /// Сервис по работе с телеграммовскими пользовательскими данными.
 type UserService() = 
     let context = new ConnectionContext()
-    
+
     let getUserData(user: User) = (
         user.DateOfBirth,
-        user.SurName,
         user.Name,
-        user.Patronymic )
+        user.Patronymic,
+        user.SurName )
 
     let registrate (user: User): int = 
         let regUser = 

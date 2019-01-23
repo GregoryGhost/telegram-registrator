@@ -47,8 +47,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Program.fs" />
-    <None Include="App.config" />
     <Content Include="packages.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Argu">
@@ -97,6 +97,13 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TelegramBot.Registrator.Db\TelegramBot.Registrator.Db.fsproj">
+      <Name>TelegramBot.Registrator.Db</Name>
+      <Project>{d35858c0-6766-4c5b-b7ea-978854f3c0dd}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
