@@ -3,6 +3,9 @@ open TelegramBot.Registrator.Db.Services
 open TelegramBot.Registrator.Db.Models
 open System
 open TelegramBot.Registrator.Db
+open System.Data
+open System.Data.SqlClient
+open System.Configuration
 
 type Test = { Name: string }
 
@@ -30,15 +33,24 @@ let tests =
         }
     ]
 
+module AppConfig = 
+    let [<Literal>] connName = "rzsql"
+
+
 [<EntryPoint>]
 let main args =
     // TODO:
-    // 1. В сборке Db должен быть хелпер по созданию тестовой БД 
-        // - просто запрос на SQL по созданию тестовой БД
-    // 1.1 Должна быть функцию по перенацеливанию подключения к БД на тестовую БД
-    // 1.2 Дропать БД после тестов
-        // - просто запрос на SQL по удалению тестовой БД
-    // 1.3 Создавать БД перед тестами
     // 1.4 В каждом тесте по работе с записями удалять их в БД перед выходом из теста
-    // 1.5 Запуск мигратора после создания тестовой БД
+    Migrator.run
     runTestsWithArgs defaultConfig args tests
+    let connString = ConfigurationManager.ConnectionStrings.[AppConfig.connName].ConnectionString
+    use db = new SqlConnection(connString)
+    db.Open()
+    let cmd = db.CreateCommand()
+    cmd.CommandText <- "USE master;"
+        + "ALTER DATABASE [telegram-test] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;"
+        + "drop database [telegram-test]"
+    cmd.CommandType <- CommandType.Text
+    cmd.ExecuteNonQuery()
+    db.Close()
+    0
