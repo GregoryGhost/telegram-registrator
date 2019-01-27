@@ -32,4 +32,12 @@ module UserServiceTest =
                 us.Remove(idTelegramUser)
                 Expect.isFalse failRegisration "Отказ в регистрации дублирующегося пользователя"
             }
+            test "Удаление пользователя" {
+                let us = new UserService()
+                us.Registrate(idTelegramUser, newUser) |> ignore
+                us.Remove(idTelegramUser)
+                let gotUser = 
+                    us.GetUserById(idTelegramUser)
+                Expect.isNone gotUser "Пользователь удален"
+            }
         ]
