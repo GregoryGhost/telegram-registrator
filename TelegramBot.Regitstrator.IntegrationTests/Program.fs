@@ -14,6 +14,7 @@ module AppConfig =
 let main args =
     // TODO:
     // 1.4 В каждом тесте по работе с записями удалять их в БД перед выходом из теста
+    // 1.5 Вынести удаление БД в функцию и вызывать перед тестированием.
     Migrator.run
 
     let result = TestList.runTestList args

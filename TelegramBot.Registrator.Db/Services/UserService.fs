@@ -118,14 +118,15 @@ type UserService() =
 
     /// Зарегистрировать пользовательские данные для телеграмм пользователя.
     member __.Registrate(idTelegramUser: int, user: User): bool =
-        let checkRegisteredUser = 
+        let checkRegisteredUser() = 
             let res = 
                 getRegistratedUser user
             let registeredTelegramUser = 
                 getRegistratedUserByTelegramUser idTelegramUser
-            Option.isSome res
-                || Option.isSome registeredTelegramUser
-        if checkRegisteredUser then
+            let isRegistrated = 
+                Option.isSome res || Option.isSome registeredTelegramUser
+            isRegistrated
+        if checkRegisteredUser() then
             false
         else
             let idUser =
