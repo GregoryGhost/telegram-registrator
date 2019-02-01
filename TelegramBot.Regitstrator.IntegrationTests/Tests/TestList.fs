@@ -8,7 +8,7 @@ module TestList =
     ///     args - Аргументы командной строки.
     let runTestList(args: string[]) = 
         testList "Запуск всех тестов:" [
-            DataTests.idTelegramUser |> UserServiceTest.tests 
+            DataTests.idTelegramUser |> UserServiceTest.tests  |> testSequencedGroup "последовательная запись в БД"
         ]
         |> (runTestsWithArgs defaultConfig args)
 
