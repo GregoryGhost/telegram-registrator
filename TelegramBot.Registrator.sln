@@ -10,6 +10,11 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramBot.TestRegistrator
 		{D35858C0-6766-4C5B-B7EA-978854F3C0DD} = {D35858C0-6766-4C5B-B7EA-978854F3C0DD}
 	EndProjectSection
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramBot.Regitstrator.IntegrationTests", "TelegramBot.Regitstrator.IntegrationTests\TelegramBot.Regitstrator.IntegrationTests.fsproj", "{C0437D0B-F425-48AE-A254-2047DB88982D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D35858C0-6766-4C5B-B7EA-978854F3C0DD} = {D35858C0-6766-4C5B-B7EA-978854F3C0DD}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +29,10 @@ Global
 		{524CBDC7-4503-44B2-AEF4-36968C9B9D53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{524CBDC7-4503-44B2-AEF4-36968C9B9D53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{524CBDC7-4503-44B2-AEF4-36968C9B9D53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0437D0B-F425-48AE-A254-2047DB88982D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0437D0B-F425-48AE-A254-2047DB88982D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0437D0B-F425-48AE-A254-2047DB88982D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0437D0B-F425-48AE-A254-2047DB88982D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

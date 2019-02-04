@@ -58,6 +58,7 @@
     <None Include="V1.model.sql" />
     <None Include="V1.model-user_cascade_delete.sql" />
     <Compile Include="Models\User.fs" />
+    <Compile Include="Helpers\DbHelper.fs" />
     <Compile Include="Services\UserService.fs" />
     <Compile Include="Migrator.fs" />
   </ItemGroup>
