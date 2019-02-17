@@ -1,50 +1,50 @@
-﻿module CsharpTelegramBotClient =
-    open Telegram.Bot
-    open MihaZupan
-    open System
-    open Telegram.Bot.Args
-    open Telegram.Bot.Types.Enums
-    open System.Linq
-    open Telegram.Bot.Types
+﻿//module CsharpTelegramBotClient =
+//    open Telegram.Bot
+//    open MihaZupan
+//    open System
+//    open Telegram.Bot.Args
+//    open Telegram.Bot.Types.Enums
+//    open System.Linq
+//    open Telegram.Bot.Types
 
-    let token = "token"
+//    let token = "token"
 
-    //let proxy = new HttpToSocks5Proxy(" 91.144.167.217", 1080)
+//    let proxy = new HttpToSocks5Proxy(" 91.144.167.217", 1080)
 
-    let bot = new TelegramBotClient(token)
+//    let private bot = new TelegramBotClient(token)
 
-    let onMessageReceived (args: MessageEventArgs) =
-        let msg = args.Message
-        if (msg = null || msg.Type <> MessageType.Text) then ()
-        else 
-            match msg.Text.Split(' ').First() with
-            | "/echo" -> 
-                let echoMsg = 
-                    let m = msg.Text.Split(' ')
-                    if Array.isEmpty m then None else m |> Array.skip 1 |> Some
-                let sendingMsg = 
-                    echoMsg
-                    |> Option.defaultValue [| "kek" |]
-                    |> Array.reduce (+)
-                bot.SendTextMessageAsync(msg.Chat.Id |> ChatId, sendingMsg) |> Async.AwaitTask |> ignore
-            | _ -> 
-                let usage = @"
-                    /echo - echo command"
-                bot.SendTextMessageAsync(msg.Chat.Id |> ChatId, usage) |> Async.AwaitTask |> ignore
+//    let onMessageReceived (args: MessageEventArgs) =
+//        let msg = args.Message
+//        if (msg = null || msg.Type <> MessageType.Text) then ()
+//        else 
+//            match msg.Text.Split(' ').First() with
+//            | "/echo" -> 
+//                let echoMsg = 
+//                    let m = msg.Text.Split(' ')
+//                    if Array.isEmpty m then None else m |> Array.skip 1 |> Some
+//                let sendingMsg = 
+//                    echoMsg
+//                    |> Option.defaultValue [| "kek" |]
+//                    |> Array.reduce (+)
+//                bot.SendTextMessageAsync(msg.Chat.Id |> ChatId, sendingMsg) |> Async.AwaitTask |> ignore
+//            | _ -> 
+//                let usage = @"
+//                    /echo - echo command"
+//                bot.SendTextMessageAsync(msg.Chat.Id |> ChatId, usage) |> Async.AwaitTask |> ignore
 
-    let main() =
-        let me = bot.GetMeAsync().Result
-        Console.Title <- me.Username
+//    let main() =
+//        let me = bot.GetMeAsync().Result
+//        Console.Title <- me.Username
 
-        bot.OnMessage.Add onMessageReceived
-        bot.OnMessageEdited.Add onMessageReceived
-        bot.OnReceiveError.Add (fun x -> printfn "Error %d %s" x.ApiRequestException.ErrorCode x.ApiRequestException.Message)
+//        bot.OnMessage.Add onMessageReceived
+//        bot.OnMessageEdited.Add onMessageReceived
+//        bot.OnReceiveError.Add (fun x -> printfn "Error %d %s" x.ApiRequestException.ErrorCode x.ApiRequestException.Message)
 
-        bot.StartReceiving()
-        printfn "start listening for %s" me.Username
-        Console.ReadLine() |> ignore
-        bot.StopReceiving()
-        0
+//        bot.StartReceiving()
+//        printfn "start listening for %s" me.Username
+//        Console.ReadLine() |> ignore
+//        bot.StopReceiving()
+//        0
 
 module Types =
     type Logger = 
@@ -107,13 +107,23 @@ module Echo =
             |> logResponse settings
         } |> ignore
 
-    let onTest settings context (x, y, z) =
+    open System.Globalization
+    open System
+
+    let onTest settings context (x, y, z, d) =
         maybe {
             settings.Logger.Log "Принял /test."
-            settings.Logger.Log (sprintf "Принял x=%s y=%s z=%s" x y z)
+            settings.Logger.Log (sprintf "Принял x=%s y=%s z=%s d=%s" x y z d)
+            let datePattern = "dd-MM-yyyy"
+            let! date = 
+                let mutable dateBirth: DateTime = DateTime.UtcNow
+                if DateTime.TryParseExact(d, datePattern, null, DateTimeStyles.None, &dateBirth) then
+                    Some dateBirth
+                else None
+            settings.Logger.Log (sprintf "Принял x=%s y=%s z=%s d=%s" x y z (date.ToString(datePattern)))
             let! message = context.Update.Message
 
-            sprintf "x=%s y=%s z=%s" x y z
+            sprintf "x=%s y=%s z=%s d=%s" x y z (date.ToString(datePattern))
             |> sendMessage message.Chat.Id
             |> api context.Config
             |> Async.RunSynchronously
@@ -127,11 +137,14 @@ open Newtonsoft.Json
 open System.IO
 open System
 open Funogram.Api
+open ExtCore.Control
 
 let processResultWithValue (result: Result<'a, ApiResponseError>): 'a option =
     match result with
     | Ok v -> Some v
-    | _ -> None
+    | Result.Error e -> 
+        printfn "Error: %s" e.Description
+        None
 
 let processResult (result: Result<'a, ApiResponseError>) =
     processResultWithValue result |> ignore
@@ -163,7 +176,7 @@ let private onUpdate settings (context: UpdateContext) =
             bot (sendMessageMarkup (fromId()) "That's keyboard!" markup) config
         ))
         cmd "/send_action" (fun x -> bot (sendMessage context.Update.Message.Value.Chat.Id x.Update.Message.Value.Text.Value) config)
-        cmdScan "/test z=%s y=%s x=%s" (Echo.onTest settings context)
+        cmdScan "/test ФИО=%s %s %s, др=%s" (Echo.onTest settings context)
         cmdScan "/echo2 %s" (Echo.onEcho settings context)
     ] |> ignore
     
@@ -175,16 +188,17 @@ let private deserialize<'a> (file: string) =
 
 [<EntryPoint>]
 let main _ = 
-    //deserialize<Config> "config.json"
-    Some { TgToken = "token"}
-    |> Option.map (fun config ->
+    maybe {
+        let! config = deserialize<Config> "config.json"
         let settings = { Logger = { Log = Console.WriteLine }; Config = config }
         settings.Logger.Log "Запустили бота."
+
         startBot { 
             defaultConfig with 
                 Token = settings.Config.TgToken 
         } (onUpdate settings) None
-        |> Async.RunSynchronously )
-    |> ignore
+        |> Async.RunSynchronously
+        |> ignore
+    } |> ignore
     0
     //CsharpTelegramBotClient.main()
