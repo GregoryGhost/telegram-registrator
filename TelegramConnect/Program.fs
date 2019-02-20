@@ -69,7 +69,7 @@ module Types =
 
     type Config = 
         { TgToken: string
-          Proxy: Proxy }    
+          Proxy: Proxy option }    
   
     type Settings = 
         { Config: Config
@@ -214,10 +214,12 @@ let main _ =
 
         settings.Logger.Log "Запустили бота."
 
+        let! proxy = settings.Config.Proxy
+
         startBot { 
             defaultConfig with 
                 Token = settings.Config.TgToken
-                Client = settings.Config.Proxy.createProxy()
+                Client = proxy.createProxy()
         } (onUpdate settings) None
         |> Async.RunSynchronously
         |> ignore
