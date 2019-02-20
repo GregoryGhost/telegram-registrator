@@ -1,3 +1,7 @@
 ﻿{
-    TgToken: "666750541:AAHeZfY9CrTsvJytyJcfZD9cSxczVaJde1E"
+    "TgToken": "токен",
+    "Proxy": {
+        "Host": "212.22.92.250",
+        "Port": "51080"
+    }
 }

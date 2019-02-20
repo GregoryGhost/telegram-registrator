@@ -1,4 +1,6 @@
-﻿//module CsharpTelegramBotClient =
+﻿open System.Configuration
+
+//module CsharpTelegramBotClient =
 //    open Telegram.Bot
 //    open MihaZupan
 //    open System
@@ -47,11 +49,27 @@
 //        0
 
 module Types =
+    open System.Net
+    open System.Net.Http
+    
     type Logger = 
         { Log: string -> unit }
 
+    type Proxy =
+        { Host: string
+          Port: int }
+        with 
+            member __.createProxy() =
+                let proxy = new WebProxy(__.Host, __.Port)
+                let handler = new HttpClientHandler()
+                handler.Proxy <- proxy
+                handler.UseProxy <- true
+                let proxyClient = new HttpClient(handler, true)
+                proxyClient
+
     type Config = 
-        { TgToken: string }    
+        { TgToken: string
+          Proxy: Proxy }    
   
     type Settings = 
         { Config: Config
@@ -138,6 +156,8 @@ open System.IO
 open System
 open Funogram.Api
 open ExtCore.Control
+open System.Net.Http
+open System.Net
 
 let processResultWithValue (result: Result<'a, ApiResponseError>): 'a option =
     match result with
@@ -191,11 +211,13 @@ let main _ =
     maybe {
         let! config = deserialize<Config> "config.json"
         let settings = { Logger = { Log = Console.WriteLine }; Config = config }
+
         settings.Logger.Log "Запустили бота."
 
         startBot { 
             defaultConfig with 
-                Token = settings.Config.TgToken 
+                Token = settings.Config.TgToken
+                Client = settings.Config.Proxy.createProxy()
         } (onUpdate settings) None
         |> Async.RunSynchronously
         |> ignore
