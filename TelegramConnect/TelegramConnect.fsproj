@@ -70,6 +70,9 @@
     <Reference Include="FSharp.Core">
       <HintPath>..\packages\FSharp.Core.4.5.2\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
+    <Reference Include="FSharp.Json">
+      <HintPath>..\packages\FSharp.Json.0.3.4\lib\netstandard2.0\FSharp.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Funogram">
       <HintPath>..\packages\Funogram.1.3.0\lib\net45\Funogram.dll</HintPath>
     </Reference>

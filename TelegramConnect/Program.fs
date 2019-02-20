@@ -69,7 +69,7 @@ module Types =
 
     type Config = 
         { TgToken: string
-          Proxy: Proxy option }    
+          Proxy: Proxy option }
   
     type Settings = 
         { Config: Config
@@ -158,6 +158,7 @@ open Funogram.Api
 open ExtCore.Control
 open System.Net.Http
 open System.Net
+open FSharp.Json
 
 let processResultWithValue (result: Result<'a, ApiResponseError>): 'a option =
     match result with
@@ -201,7 +202,7 @@ let private onUpdate settings (context: UpdateContext) =
     ] |> ignore
     
 let private deserialize<'a> (file: string) = 
-    let read = File.ReadAllText >> JsonConvert.DeserializeObject<'a>
+    let read = File.ReadAllText >> Json.deserialize<'a>
     if File.Exists file then read file |> Some else None
 
 
@@ -214,13 +215,17 @@ let main _ =
 
         settings.Logger.Log "Запустили бота."
 
-        let! proxy = settings.Config.Proxy
+        let! proxy =
+            config.Proxy 
+            |> Option.bind (fun x -> x.createProxy() |> Some) 
+            |> Option.defaultValue defaultConfig.Client |> Some
 
-        startBot { 
+        let startBotConfig = {
             defaultConfig with 
                 Token = settings.Config.TgToken
-                Client = proxy.createProxy()
-        } (onUpdate settings) None
+                Client = proxy
+        }
+        startBot startBotConfig (onUpdate settings) None
         |> Async.RunSynchronously
         |> ignore
     } |> ignore
