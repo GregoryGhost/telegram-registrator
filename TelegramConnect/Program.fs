@@ -1,4 +1,5 @@
 ﻿open System.Configuration
+open Funogram.Bot
 
 //module CsharpTelegramBotClient =
 //    open Telegram.Bot
@@ -85,6 +86,45 @@ module Tools =
         | Result.Error error -> error.Description
         |> settings.Logger.Log 
 
+open ExtCore.Control
+open Funogram.Api
+open Types
+open Tools
+
+type Commands = 
+    { Name: string
+      Description: string
+      Arguments: string list }
+
+type Greeter(commands: Commands list) =
+    let formatedCommands: string =
+        let formatCommand cmd =
+            let header = sprintf "%s - %s" cmd.Name cmd.Description
+            let body = 
+                //TODO: тут может быть эксепшен нужно обработать, редюс не может в пустой список
+                let args = List.reduce (+) cmd.Arguments
+                sprintf "%s %s" cmd.Name args
+            sprintf "%s\n%s\n\n" header body
+        //TODO: тут может быть эксепшен нужно обработать, редюс не может в пустой список
+        List.reduce (+)
+        <| List.map formatCommand commands
+
+    member __.onTestStart =
+        printfn "%s" formatedCommands
+    
+    //member __.onStart (settings: Settings) (context: UpdateContext) = 
+    //    maybe {
+    //        settings.Logger.Log "Начал обработку команд."
+    //        let! message = context.Update.Message
+    //        let! name = message.Chat.FirstName
+
+    //        sprintf "Добро пожаловать, %s! Доступны следующие команды: %s" name formatedCommands
+    //        |> sendMessage message.Chat.Id
+    //        |> api context.Config
+    //        |> Async.RunSynchronously
+    //        |> logResponse settings
+    //    } |> ignore
+
 module Start = 
     open ExtCore.Control
     open Funogram.Bot
@@ -92,12 +132,13 @@ module Start =
     open Types
     open Tools
 
-    let onStart settings context =
+    let onStart (settings: Settings) (context: UpdateContext)  =
         maybe {
             settings.Logger.Log "Начал обработку команд."
             let! message = context.Update.Message
             let! name = message.Chat.FirstName
-            sprintf "Привет, %s! Используй /echo! 😉" name
+
+            sprintf "Добро пожаловать, %s! Доступны следующие команды:" name
             |> sendMessage message.Chat.Id
             |> api context.Config
             |> Async.RunSynchronously
@@ -173,16 +214,36 @@ let processResult (result: Result<'a, ApiResponseError>) =
 let botResult data config = api config data |> Async.RunSynchronously
 let bot data config = botResult data config |> processResult
 
+let _cmds = 
+    [{ Name = "/start"
+       Description = "начальная команда"
+       Arguments = []}
+     { Name = "/start"
+       Description = "тоже самое что /start"
+       Arguments = []}]
+   
+let _cmds = 
+    [{ Name = "/start"
+       Description = "начальная команда"
+       Arguments = ["kek"]}
+     { Name = "/help"
+       Description = "тоже самое что /start"
+       Arguments = ["kek"]}]
+
+let _greeter = new Greeter(_cmds)
+_greeter.onTestStart
+
 let private onUpdate settings (context: UpdateContext) =
     let config = context.Config
     let fromId() = context.Update.Message.Value.From.Value.Id
     let sayWithArgs text parseMode disableWebPagePreview disableNotification replyToMessageId replyMarkup =
             bot (sendMessageBase (ChatId.Int (fromId())) text parseMode disableWebPagePreview disableNotification replyToMessageId replyMarkup)
+    
     //note: команды с параметрами идут сначала менее общие, затем более общие,
     // то есть с наибольшим количеством параметров идут сначала, если параметры совпадают,
     //  затем с наименьшим количеством параметров.
     processCommands context [
-        cmd "/start" (Start.onStart settings)
+        cmd "/start" (_greeter.onStart settings)
         cmd "/help" (Start.onStart settings)
         cmd "/say" (fun _ -> sayWithArgs "That's message with reply!" None None None (Some context.Update.Message.Value.MessageId) None config)
         cmd "/send_message5" (fun _ ->
