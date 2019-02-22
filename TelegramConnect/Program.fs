@@ -97,33 +97,41 @@ type Commands =
       Arguments: string list }
 
 type Greeter(commands: Commands list) =
-    let formatedCommands: string =
-        let formatCommand cmd =
-            let header = sprintf "%s - %s" cmd.Name cmd.Description
-            let body = 
-                //TODO: тут может быть эксепшен нужно обработать, редюс не может в пустой список
-                let args = List.reduce (+) cmd.Arguments
-                sprintf "%s %s" cmd.Name args
-            sprintf "%s\n%s\n\n" header body
-        //TODO: тут может быть эксепшен нужно обработать, редюс не может в пустой список
-        List.reduce (+)
-        <| List.map formatCommand commands
+    let formatCommand cmd =
+        let header = sprintf "%s - %s" cmd.Name cmd.Description
+        let body = 
+            let args = 
+                if List.isEmpty cmd.Arguments then
+                    "аргументы отсутствуют"
+                else
+                    List.reduce (+) cmd.Arguments
+            sprintf "%s %s" cmd.Name args
+        sprintf "%s\n%s\n\n" header body
+    
+    let formattedCommands: string =
+        let formattedCommands = 
+            if List.isEmpty commands then
+                "Команды отсутствуют"
+            else
+                List.reduce (+)
+                <| List.map formatCommand commands
+        formattedCommands
 
     member __.onTestStart =
-        printfn "%s" formatedCommands
+        printfn "%s" formattedCommands
     
-    //member __.onStart (settings: Settings) (context: UpdateContext) = 
-    //    maybe {
-    //        settings.Logger.Log "Начал обработку команд."
-    //        let! message = context.Update.Message
-    //        let! name = message.Chat.FirstName
+    member __.onStart (settings: Settings) (context: UpdateContext) = 
+        maybe {
+            settings.Logger.Log "Начал обработку команд."
+            let! message = context.Update.Message
+            let! name = message.Chat.FirstName
 
-    //        sprintf "Добро пожаловать, %s! Доступны следующие команды: %s" name formatedCommands
-    //        |> sendMessage message.Chat.Id
-    //        |> api context.Config
-    //        |> Async.RunSynchronously
-    //        |> logResponse settings
-    //    } |> ignore
+            sprintf "Добро пожаловать, %s! Доступны следующие команды: %s" name formattedCommands
+            |> sendMessage message.Chat.Id
+            |> api context.Config
+            |> Async.RunSynchronously
+            |> logResponse settings
+        } |> ignore
 
 module Start = 
     open ExtCore.Control
@@ -214,13 +222,6 @@ let processResult (result: Result<'a, ApiResponseError>) =
 let botResult data config = api config data |> Async.RunSynchronously
 let bot data config = botResult data config |> processResult
 
-let _cmds = 
-    [{ Name = "/start"
-       Description = "начальная команда"
-       Arguments = []}
-     { Name = "/start"
-       Description = "тоже самое что /start"
-       Arguments = []}]
    
 let _cmds = 
     [{ Name = "/start"
@@ -228,7 +229,10 @@ let _cmds =
        Arguments = ["kek"]}
      { Name = "/help"
        Description = "тоже самое что /start"
-       Arguments = ["kek"]}]
+       Arguments = ["kek"]}
+     { Name = "/empty_args"
+       Description = "пример пустой команды"
+       Arguments = []}]
 
 let _greeter = new Greeter(_cmds)
 _greeter.onTestStart
