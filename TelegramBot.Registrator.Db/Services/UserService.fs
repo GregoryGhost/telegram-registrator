@@ -117,7 +117,7 @@ type UserService() =
             printfn "User: %A" (userDbItem |> toUser)
 
     /// Зарегистрировать пользовательские данные для телеграмм пользователя.
-    member __.Registrate(idTelegramUser: int, user: User): bool =
+    member __.Registrate(idTelegramUser: int64, user: User): bool =
         let checkRegisteredUser() = 
             let res = 
                 getRegistratedUser user
@@ -135,7 +135,7 @@ type UserService() =
             true
 
     /// Получить пользовательские данные по идентификатору телеграмм пользователя.
-    member __.GetUserById(idTelegramUser: int): User option =
+    member __.GetUserById(idTelegramUser: int64): User option =
         let idUser =
             idTelegramUser
             |> getRegistratedUserByTelegramUser
@@ -147,7 +147,7 @@ type UserService() =
         user
     
     /// Удалить пользовательские данные по идентификатору телеграмм пользователя.
-    member __.Remove(idTelegramUser: int) =
+    member __.Remove(idTelegramUser: int64) =
         RemoveUserForTelegramUser
             .Command(idTelegramUser)
             .Execute(context)

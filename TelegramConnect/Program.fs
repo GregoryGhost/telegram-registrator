@@ -153,50 +153,89 @@ module Start =
             |> logResponse settings
         } |> ignore
 
-module Echo =
+module Registrator =
     open ExtCore.Control
     open Funogram.Bot
     open Funogram.Api
     open Types
     open Tools
 
-    let onEcho settings context x =
-        maybe {
-            settings.Logger.Log "Принял /echo."
-            settings.Logger.Log (sprintf "Принял x=%s" x)
-            let! message = context.Update.Message
-            let! text = message.Text
-
-            x
-            |> sendMessage message.Chat.Id
-            |> api context.Config
-            |> Async.RunSynchronously
-            |> logResponse settings
-        } |> ignore
-
     open System.Globalization
     open System
 
-    let onTest settings context (x, y, z, d) =
+    open TelegramBot.Registrator.Db.Services
+    open TelegramBot.Registrator.Db.Helpers
+
+    let private _userService = new UserService()
+
+    let onRegistrate (settings: Settings) (context: UpdateContext) (surname, name, patronymic, birthDate) =
         maybe {
-            settings.Logger.Log "Принял /test."
-            settings.Logger.Log (sprintf "Принял x=%s y=%s z=%s d=%s" x y z d)
-            let datePattern = "dd-MM-yyyy"
+            settings.Logger.Log "Принял /registrate."
+            settings.Logger.Log (sprintf "Принял Фамилия=%s Имя=%s Отчество=%s Дата_рождения=%s" 
+                <| surname
+                <| name
+                <| patronymic
+                <| birthDate)
             let! date = 
                 let mutable dateBirth: DateTime = DateTime.UtcNow
-                if DateTime.TryParseExact(d, datePattern, null, DateTimeStyles.None, &dateBirth) then
+                if DateTime.TryParseExact(birthDate, User.datePattern, null, DateTimeStyles.None, &dateBirth) then
                     Some dateBirth
                 else None
-            settings.Logger.Log (sprintf "Принял x=%s y=%s z=%s d=%s" x y z (date.ToString(datePattern)))
+            
             let! message = context.Update.Message
+            let! user = message.From
+            let userData = User.ofSourceData surname name patronymic date
+            let resultRegistration = 
+                let isRegistrated  = _userService.Registrate(user.Id, userData)
+                if isRegistrated then
+                    "Регистрация успешно завершена."
+                else
+                    "Регистрация не удалась"
 
-            sprintf "x=%s y=%s z=%s d=%s" x y z (date.ToString(datePattern))
+            resultRegistration
             |> sendMessage message.Chat.Id
             |> api context.Config
             |> Async.RunSynchronously
             |> logResponse settings
         } |> ignore
- 
+    
+    let onRead (settings: Settings) (context: UpdateContext) =
+        maybe {
+            settings.Logger.Log "Принял /read."
+            let! message = context.Update.Message
+            let! user = message.From
+
+            let resultRegistration =
+                let registration = _userService.GetUserById(user.Id)
+                if registration.IsSome then
+                    sprintf "%s" <| User.toString registration.Value
+                else
+                    sprintf "Пользовательские данные не найдены, зарегистрируетесь."
+
+            resultRegistration
+            |> sendMessage message.Chat.Id
+            |> api context.Config
+            |> Async.RunSynchronously
+            |> logResponse settings
+        } |> ignore
+
+    let onDelete settings context =         
+        maybe {
+            settings.Logger.Log "Принял /delete."
+            let! message = context.Update.Message
+            let! user = message.From
+
+            let resultRegistration =
+                let isRemoved = _userService.Remove(user.Id)
+                sprintf "Удаление данных: %A" isRemoved
+
+            resultRegistration
+            |> sendMessage message.Chat.Id
+            |> api context.Config
+            |> Async.RunSynchronously
+            |> logResponse settings
+        } |> ignore
+
 open Funogram.Bot
 open Funogram.Types
 open Types
@@ -248,22 +287,9 @@ let private onUpdate settings (context: UpdateContext) =
     //  затем с наименьшим количеством параметров.
     processCommands context [
         cmd "/start" (_greeter.onStart settings)
-        cmd "/help" (Start.onStart settings)
-        cmd "/say" (fun _ -> sayWithArgs "That's message with reply!" None None None (Some context.Update.Message.Value.MessageId) None config)
-        cmd "/send_message5" (fun _ ->
-        (
-            let keyboard = (Seq.init 2 (fun x -> Seq.init 2 (fun y -> { Text = y.ToString() + x.ToString(); RequestContact = None; RequestLocation = None })))
-            let markup = Markup.ReplyKeyboardMarkup {
-                Keyboard = keyboard
-                ResizeKeyboard = None
-                OneTimeKeyboard = None
-                Selective = None
-            }
-            bot (sendMessageMarkup (fromId()) "That's keyboard!" markup) config
-        ))
-        cmd "/send_action" (fun x -> bot (sendMessage context.Update.Message.Value.Chat.Id x.Update.Message.Value.Text.Value) config)
-        cmdScan "/test ФИО=%s %s %s, др=%s" (Echo.onTest settings context)
-        cmdScan "/echo2 %s" (Echo.onEcho settings context)
+        cmdScan "/registrate ФИО=%s %s %s, др=%s" (Registrator.onRegistrate settings context)
+        cmd "/list" (Registrator.onRead settings)
+        cmd "/delete" (Registrator.onDelete settings)
     ] |> ignore
     
 let private deserialize<'a> (file: string) = 
