@@ -5,17 +5,12 @@ VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramBot.Registrator.Db", "TelegramBot.Registrator.Db\TelegramBot.Registrator.Db.fsproj", "{D35858C0-6766-4C5B-B7EA-978854F3C0DD}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramBot.TestRegistratorDb", "ConsoleApplication1\TelegramBot.TestRegistratorDb.fsproj", "{524CBDC7-4503-44B2-AEF4-36968C9B9D53}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramBot.Registrator.Tests", "TelegramBot.Regitstrator.IntegrationTests\TelegramBot.Registrator.Tests.fsproj", "{C0437D0B-F425-48AE-A254-2047DB88982D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D35858C0-6766-4C5B-B7EA-978854F3C0DD} = {D35858C0-6766-4C5B-B7EA-978854F3C0DD}
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramBot.Regitstrator.IntegrationTests", "TelegramBot.Regitstrator.IntegrationTests\TelegramBot.Regitstrator.IntegrationTests.fsproj", "{C0437D0B-F425-48AE-A254-2047DB88982D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D35858C0-6766-4C5B-B7EA-978854F3C0DD} = {D35858C0-6766-4C5B-B7EA-978854F3C0DD}
-	EndProjectSection
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramConnect", "TelegramConnect\TelegramConnect.fsproj", "{F021FDCA-EBAF-4850-9ED2-3C4D9DFE2041}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TelegramBot.Registrator.Front", "TelegramConnect\TelegramBot.Registrator.Front.fsproj", "{F021FDCA-EBAF-4850-9ED2-3C4D9DFE2041}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +22,6 @@ Global
 		{D35858C0-6766-4C5B-B7EA-978854F3C0DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D35858C0-6766-4C5B-B7EA-978854F3C0DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D35858C0-6766-4C5B-B7EA-978854F3C0DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{524CBDC7-4503-44B2-AEF4-36968C9B9D53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{524CBDC7-4503-44B2-AEF4-36968C9B9D53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{524CBDC7-4503-44B2-AEF4-36968C9B9D53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{524CBDC7-4503-44B2-AEF4-36968C9B9D53}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C0437D0B-F425-48AE-A254-2047DB88982D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C0437D0B-F425-48AE-A254-2047DB88982D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0437D0B-F425-48AE-A254-2047DB88982D}.Release|Any CPU.ActiveCfg = Release|Any CPU
