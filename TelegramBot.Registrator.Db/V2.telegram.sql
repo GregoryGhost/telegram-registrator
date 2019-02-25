@@ -1,2 +1,2 @@
 ﻿ALTER TABLE TelegramUsers
-	ALTER COLUMN IdTelegramUser int64;
+	DROP CONSTRAINT TelegramUsers_IdTelegramUser_PK;

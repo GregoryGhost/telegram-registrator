@@ -57,9 +57,9 @@
     <None Include="rzsql.json" />
     <None Include="V1.model.sql" />
     <None Include="V1.model-user_cascade_delete.sql" />
-    <None Include="V1.model-telegram_user_drop_constraint_pk.sql" />
     <None Include="V2.telegram.sql" />
-    <None Include="V2.telegram-telegram_user_alter_type_telegram_user.sql" />
+    <None Include="V3.telegram2.sql" />
+    <None Include="V3.telegram2-telegram_user_alter_type_telegram_user.sql" />
     <Compile Include="Models\User.fs" />
     <Compile Include="Helpers\DbHelper.fs" />
     <Compile Include="Helpers\UserHelper.fs" />
