@@ -12,7 +12,7 @@ let _cmds =
        Arguments = []}
      { Name = "/registrate"
        Description = "регистрация пользовательских данных"
-       Arguments = ["ФИО=Ягами Лайт Саитиро,"; "др=28.01.1986"]}
+       Arguments = ["ФИО=Ягами Лайт Саитиро, "; "др=28-01-1986"]}
      { Name = "/read"
        Description = "вывод пользовательских данных"
        Arguments = []}
@@ -23,14 +23,11 @@ let _cmds =
 let _greeter = new Greeter(_cmds)
 
 let private onUpdate (settings: Settings) (context: UpdateContext) = 
-    //note: команды с параметрами идут сначала менее общие, затем более общие,
-    // то есть с наибольшим количеством параметров идут сначала, если параметры совпадают,
-    //  затем с наименьшим количеством параметров.
     processCommands context [
         cmd "/start" (_greeter.onStart settings)
-        cmdScan "/registrate ФИО=%s %s %s, др=%s" (Registrator.onRegistrate settings context)
         cmd "/read" (Registrator.onRead settings)
         cmd "/delete" (Registrator.onDelete settings)
+        cmdScan "/registrate ФИО=%s %s %s, др=%s" (Registrator.onRegistrate settings context)
     ] |> ignore
     
 
