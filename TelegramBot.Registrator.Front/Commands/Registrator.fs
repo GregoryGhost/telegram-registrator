@@ -15,6 +15,17 @@ module Registrator =
 
     let private _userService = new UserService()
 
+    let private checkRegistration(userId: int64): Result<int64, string> =
+        let registration = _userService.GetUserById(userId)
+        if registration.IsNone then
+            Result.Error "пользовательские данные не найдены, зарегистрируйтесь."
+        else Ok userId
+    
+    let formatResult (msg: Printf.StringFormat<(string -> string)>) 
+        (v: Result<string, string>): string =
+            match v with
+            | Ok o | Result.Error o -> sprintf msg o
+
     let onRegistrate (settings: Settings) (context: UpdateContext) 
         (surname: string, name: string, patronymic: string, birthDate: string) =
         maybe {
@@ -58,7 +69,7 @@ module Registrator =
                 if registration.IsSome then
                     sprintf "%s" <| User.toString registration.Value
                 else
-                    sprintf "Пользовательские данные не найдены, зарегистрируетесь."
+                    sprintf "Пользовательские данные не найдены, зарегистрируйтесь."
 
             resultRegistration
             |> sendMessage message.Chat.Id
@@ -74,8 +85,15 @@ module Registrator =
             let! user = message.From
 
             let resultRegistration =
-                let isRemoved = _userService.Remove(user.Id)
-                sprintf "Удаление данных: %A" isRemoved
+                let removeUser (userId: int64): string = 
+                    _userService.Remove(userId)
+                    let missedUser = _userService.GetUserById(userId)
+                    if missedUser.IsSome then "неудача"
+                    else "удалены"
+                checkRegistration user.Id
+                |> Result.map removeUser
+                |> Result.mapError (fun x -> x)
+                |> formatResult "Удаление данных: %s"
 
             resultRegistration
             |> sendMessage message.Chat.Id
