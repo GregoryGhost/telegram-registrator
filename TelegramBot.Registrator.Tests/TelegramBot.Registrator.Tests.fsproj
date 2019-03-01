@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <UseStandardResourceNames>true</UseStandardResourceNames>
-    <Name>TelegramBot.Regitstrator.IntegrationTests</Name>
+    <Name>TelegramBot.Registrator.Tests</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

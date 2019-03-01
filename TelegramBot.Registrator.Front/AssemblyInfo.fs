@@ -1,4 +1,4 @@
-﻿namespace ConsoleApplication1.AssemblyInfo
+﻿namespace TelegramConnect.AssemblyInfo
 
 open System.Reflection
 open System.Runtime.CompilerServices
@@ -7,12 +7,12 @@ open System.Runtime.InteropServices
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[<assembly: AssemblyTitle("ConsoleApplication1")>]
+[<assembly: AssemblyTitle("TelegramConnect")>]
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("ConsoleApplication1")>]
-[<assembly: AssemblyCopyright("Copyright ©  2018")>]
+[<assembly: AssemblyProduct("TelegramConnect")>]
+[<assembly: AssemblyCopyright("Copyright ©  2019")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
 
@@ -22,7 +22,7 @@ open System.Runtime.InteropServices
 [<assembly: ComVisible(false)>]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[<assembly: Guid("524cbdc7-4503-44b2-aef4-36968c9b9d53")>]
+[<assembly: Guid("f021fdca-ebaf-4850-9ed2-3c4d9dfe2041")>]
 
 // Version information for an assembly consists of the following four values:
 //

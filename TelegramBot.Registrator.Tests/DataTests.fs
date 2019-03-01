@@ -2,4 +2,4 @@
 
 module DataTests =
 
-    let idTelegramUser = 666
+    let idTelegramUser = 666L

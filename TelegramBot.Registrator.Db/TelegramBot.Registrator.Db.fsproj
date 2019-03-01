@@ -57,8 +57,12 @@
     <None Include="rzsql.json" />
     <None Include="V1.model.sql" />
     <None Include="V1.model-user_cascade_delete.sql" />
+    <None Include="V2.telegram.sql" />
+    <None Include="V3.telegram2.sql" />
+    <None Include="V3.telegram2-telegram_user_alter_type_telegram_user.sql" />
     <Compile Include="Models\User.fs" />
     <Compile Include="Helpers\DbHelper.fs" />
+    <Compile Include="Helpers\UserHelper.fs" />
     <Compile Include="Services\UserService.fs" />
     <Compile Include="Migrator.fs" />
   </ItemGroup>
@@ -72,15 +76,16 @@
     <Reference Include="FParsecCS">
       <HintPath>..\packages\FParsec.1.0.2\lib\net40-client\FParsecCS.dll</HintPath>
     </Reference>
+    <Reference Include="FSharp.Core">
+      <HintPath>..\packages\FSharp.Core.4.3.4\lib\net45\FSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Json">
+      <HintPath>..\packages\FSharp.Json.0.3.4\lib\netstandard2.0\FSharp.Json.dll</HintPath>
+    </Reference>
     <Reference Include="LicenseToCIL">
       <HintPath>..\packages\LicenseToCIL.0.3.0\lib\net45\LicenseToCIL.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core">
-      <Name>FSharp.Core</Name>
-      <AssemblyName>FSharp.Core.dll</AssemblyName>
-      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\FSharp\.NETFramework\v4.0\$(TargetFSharpCoreVersion)\FSharp.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Rezoom">
       <HintPath>..\packages\Rezoom.0.4.2\lib\net45\Rezoom.dll</HintPath>
     </Reference>
