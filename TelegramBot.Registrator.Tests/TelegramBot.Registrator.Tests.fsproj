@@ -49,6 +49,7 @@
     <Compile Include="DataTests.fs" />
     <Compile Include="Tests\UserServiceTest.fs" />
     <Compile Include="Tests\TestList.fs" />
+    <Compile Include="Tests\ProxyCheckerTest.fs" />
     <Compile Include="Program.fs" />
     <Content Include="packages.config" />
     <None Include="App.config" />
