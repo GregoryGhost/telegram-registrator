@@ -16,3 +16,9 @@
         if File.Exists file then
             read file |> Some 
         else None
+
+    let serialize (path: string) (data: 'a) = 
+        let serializedData = Json.serialize data
+        use sw = new StreamWriter(path)
+        sw.WriteLine(serializedData) |> ignore
+        sw.Close()

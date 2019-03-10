@@ -14,7 +14,7 @@
         { TgToken: string
           Proxy: Proxy [] }
         with 
-            member __.createProxy() =
+            member __.createProxy(): HttpClient =
                 let proxies = 
                     __.Proxy
                     |> Array.map (fun proxy -> new ProxyInfo(proxy.Host, proxy.Port))

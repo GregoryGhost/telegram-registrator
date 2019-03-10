@@ -48,6 +48,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="DataTests.fs" />
     <Compile Include="Tests\UserServiceTest.fs" />
+    <Compile Include="Tests\ProxyConverterTest.fs" />
     <Compile Include="Tests\TestList.fs" />
     <Compile Include="Program.fs" />
     <Content Include="packages.config" />
@@ -90,6 +91,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation">
@@ -107,6 +109,11 @@
     <ProjectReference Include="..\TelegramBot.Registrator.Db\TelegramBot.Registrator.Db.fsproj">
       <Name>TelegramBot.Registrator.Db</Name>
       <Project>{d35858c0-6766-4c5b-b7ea-978854f3c0dd}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\TelegramBot.Registrator.Front\TelegramBot.Registrator.Front.fsproj">
+      <Name>TelegramBot.Registrator.Front</Name>
+      <Project>{f021fdca-ebaf-4850-9ed2-3c4d9dfe2041}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

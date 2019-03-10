@@ -1,7 +1,13 @@
-﻿{
-    "TgToken": "666750541:AAG8nwH-GCKk_P8UZ6JdyXWa2ymkTEaSN88",
-    "Proxy": {
-        "Host": "45.76.131.83",
-        "Port": 443
+{
+  "TgToken": "666750541:AAG8nwH-GCKk_P8UZ6JdyXWa2ymkTEaSN88",
+  "Proxy": [
+    {
+      "Host": "223.205.208.176",
+      "Port": 8080
+    },
+    {
+      "Host": "110.235.246.26",
+      "Port": 37037
     }
+  ]
 }
