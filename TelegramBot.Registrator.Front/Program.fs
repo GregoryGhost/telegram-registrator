@@ -40,7 +40,30 @@ let private onUpdate (settings: Settings) (context: UpdateContext) =
         cmd "/delete" (Registrator.onDelete settings)
         cmdScan "/registrate ФИО=%s %s %s, др=%s" (Registrator.onRegistrate settings context)
     ] |> sendIfUnrecognizedCommands
-    
+
+let rec runTelegramBot (settings: Settings) = 
+    maybe {
+        let! proxy =
+            settings.Config
+            |> (fun x -> if Array.isEmpty x.Proxy then None else Some x)
+            |> Option.bind (fun x -> 
+                x.createProxy().GetEnumerator().Current |> Some)
+            |> Option.defaultValue defaultConfig.Client |> Some
+
+        let startBotConfig = {
+            defaultConfig with 
+                Token = settings.Config.TgToken
+                Client = proxy
+        }
+        try
+            startBot startBotConfig (onUpdate settings) None
+            |> Async.RunSynchronously
+            |> ignore
+        with
+        | _ as ex ->
+            settings.Logger.Log <| sprintf"%A" ex
+            runTelegramBot settings |> ignore
+    }    
 
 [<EntryPoint>]
 let main _ = 
@@ -52,20 +75,6 @@ let main _ =
 
         Migrator.run
         settings.Logger.Log "Запустили бота."
-
-        let! proxy =
-            config
-            |> (fun x -> if Array.isEmpty x.Proxy then None else Some x)
-            |> Option.bind (fun x -> x.createProxy() |> Some) 
-            |> Option.defaultValue defaultConfig.Client |> Some
-
-        let startBotConfig = {
-            defaultConfig with 
-                Token = settings.Config.TgToken
-                Client = proxy
-        }
-        startBot startBotConfig (onUpdate settings) None
-        |> Async.RunSynchronously
-        |> ignore
+        runTelegramBot settings |> ignore
     } |> ignore
     0

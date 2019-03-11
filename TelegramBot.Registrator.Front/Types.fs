@@ -14,16 +14,16 @@
         { TgToken: string
           Proxy: Proxy [] }
         with 
-            member __.createProxy(): HttpClient =
-                let proxies = 
-                    __.Proxy
-                    |> Array.map (fun proxy -> new ProxyInfo(proxy.Host, proxy.Port))
-                let proxy = new HttpToSocks5Proxy(proxies)
-                let handler = new HttpClientHandler()
-                handler.Proxy <- proxy
-                handler.UseProxy <- true
-                let proxyClient = new HttpClient(handler, true)
-                proxyClient
+            member __.createProxy(): seq<HttpClient> =
+                seq {
+                    for p in __.Proxy ->
+                        let proxy = new HttpToSocks5Proxy(p.Host, p.Port)
+                        let handler = new HttpClientHandler()
+                        handler.Proxy <- proxy
+                        handler.UseProxy <- true
+                        let proxyClient = new HttpClient(handler, true)
+                        proxyClient
+                }
   
     type Settings = 
         { Config: Config
