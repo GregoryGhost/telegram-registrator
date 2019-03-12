@@ -41,28 +41,46 @@ let private onUpdate (settings: Settings) (context: UpdateContext) =
         cmdScan "/registrate ФИО=%s %s %s, др=%s" (Registrator.onRegistrate settings context)
     ] |> sendIfUnrecognizedCommands
 
-let rec runTelegramBot (settings: Settings) = 
+let rec runTelegramBot (settings: Settings) (numberProxy: int) = 
     maybe {
         let! proxy =
             settings.Config
             |> (fun x -> if Array.isEmpty x.Proxy then None else Some x)
             |> Option.bind (fun x -> 
-                x.createProxy().GetEnumerator().Current |> Some)
-            |> Option.defaultValue defaultConfig.Client |> Some
+                let proxyClient = x.createProxy() |> Seq.tryItem numberProxy
+
+                //прокси не задали в конфиге и не сбрасывали прокси
+                if (Option.isNone proxyClient) && (numberProxy = 0) then
+                    defaultConfig.Client |> Some
+                //есть прокси в конфиге для сброса прокси
+                elif (Option.isSome proxyClient) then
+                    let (proxy, client) = proxyClient |> Option.get
+                    settings.Logger.Log <| sprintf "Proxy config:%A" proxy
+                    client |> Some
+                //исчерпали все прокси из конфига
+                else
+                    None)
+
+        settings.Logger.Log "Получил прокси"
 
         let startBotConfig = {
             defaultConfig with 
                 Token = settings.Config.TgToken
                 Client = proxy
         }
+
+        settings.Logger.Log "Задал конфиг для бота"
+
         try
             startBot startBotConfig (onUpdate settings) None
             |> Async.RunSynchronously
             |> ignore
         with
         | _ as ex ->
-            settings.Logger.Log <| sprintf"%A" ex
-            runTelegramBot settings |> ignore
+            settings.Logger.Log <| sprintf "%A" ex
+            let numberResetBot = numberProxy + 1
+            settings.Logger.Log <| sprintf "Перезапуск номер:%d" numberResetBot
+            runTelegramBot settings numberResetBot |> ignore
     }    
 
 [<EntryPoint>]
@@ -75,6 +93,6 @@ let main _ =
 
         Migrator.run
         settings.Logger.Log "Запустили бота."
-        runTelegramBot settings |> ignore
+        runTelegramBot settings 0 |> ignore
     } |> ignore
     0

@@ -14,7 +14,7 @@
         { TgToken: string
           Proxy: Proxy [] }
         with 
-            member __.createProxy(): seq<HttpClient> =
+            member __.createProxy(): seq<Proxy * HttpClient> =
                 seq {
                     for p in __.Proxy ->
                         let proxy = new HttpToSocks5Proxy(p.Host, p.Port)
@@ -22,7 +22,7 @@
                         handler.Proxy <- proxy
                         handler.UseProxy <- true
                         let proxyClient = new HttpClient(handler, true)
-                        proxyClient
+                        (p, proxyClient)
                 }
   
     type Settings = 
