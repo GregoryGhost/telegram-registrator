@@ -29,15 +29,18 @@ let _greeter = new Greeter(_cmds)
 
 let private onUpdate (settings: Settings) (context: UpdateContext) = 
     let sendIfUnrecognizedCommands result =
-        if not result then ()
-        else 
-            "Команда не распознана"
+        if result then ()
+        else
+            let msgError = "Команда не распознана"
+            settings.Logger.Log msgError
+            
+            msgError
             |> Funogram.Api.sendMessage context.Update.Message.Value.Chat.Id   
             |> Api.api context.Config
             |> Async.RunSynchronously
             |> Tools.logResponse settings
             |> ignore
-    
+
     let foundCmd = processCommands context [
         cmd "/start" (_greeter.onStart settings)
         cmd "/read" (Registrator.onRead settings)
