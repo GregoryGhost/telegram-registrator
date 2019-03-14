@@ -1,0 +1,3 @@
+﻿ALTER TABLE TelegramUsers
+   ADD CONSTRAINT FK_Id_User_Cascade
+   FOREIGN KEY (IdUser) REFERENCES Users(Id) ON DELETE CASCADE;
