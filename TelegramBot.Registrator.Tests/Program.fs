@@ -9,16 +9,16 @@ module AppConfig =
 
 [<EntryPoint>]
 let main args =
- //   Migrator.run
+    Migrator.run
     
     let result = TestList.runTestList args
 
-    //let connString = ConfigurationManager.ConnectionStrings.[AppConfig.connName].ConnectionString
-    //let dbName = 
-    //    let builder = new SqlConnectionStringBuilder()
-    //    builder.ConnectionString <- connString
-    //    builder.["Initial Catalog"] :?> string |> sprintf "[%s]"
+    let connString = ConfigurationManager.ConnectionStrings.[AppConfig.connName].ConnectionString
+    let dbName = 
+        let builder = new SqlConnectionStringBuilder()
+        builder.ConnectionString <- connString
+        builder.["Initial Catalog"] :?> string |> sprintf "[%s]"
 
-    //DbHelper.dropDb(connString, dbName)
+    DbHelper.dropDb(connString, dbName)
 
     result
