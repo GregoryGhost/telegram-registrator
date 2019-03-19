@@ -12,7 +12,9 @@ module private ProxyConverter =
             let parsed = proxy.Split(':')
             let result = 
                 { Host = parsed.[0]
-                  Port = parsed.[1] |> Int32.Parse }
+                  Port = parsed.[1] |> Int32.Parse
+                  User = None
+                  Password = None }
             result
         let parsedProxy = sourceProxy |> Array.map parseProxy
         let config =

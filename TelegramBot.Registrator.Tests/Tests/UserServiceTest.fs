@@ -7,18 +7,17 @@ module UserServiceTest =
     open System
 
     let tests idTelegramUser =
-        // TODO: вынести повторяющиеся шаги в функции вспомогательного модуля
-        //  и сделать в них проверку на выполнение шага
         let newUser = {
             SurName = "Yagami"
             Name = "Lite"
             Patronymic = "Soitiro"
             DateOfBirth = new DateTime(1986, 2, 28)
         }
+        
+        let us = new UserService()
+        
         testList "Проверка CRUD UserService" [
             test "Добавление пользователя" {
-                // TODO: сделать сервис IDisposible
-                let us = new UserService()
                 us.Registrate(idTelegramUser, newUser) |> ignore
                 let gotUser =
                     us.GetUserById(idTelegramUser)
@@ -27,8 +26,6 @@ module UserServiceTest =
                 Expect.equal gotUser newUser "Получить вновь созданного пользователя для idTelegramUser"
             }
             test "Добавление дублирующегося пользователя" {
-                // TODO: сделать сервис IDisposible
-                let us = new UserService()
                 let successRegistration = us.Registrate(idTelegramUser, newUser)
                 Expect.isTrue successRegistration "Пользователь не зарегистрирован"
 
@@ -37,8 +34,6 @@ module UserServiceTest =
                 Expect.isFalse failRegisration "Отказ в регистрации дублирующегося пользователя"
             }
             test "Удаление пользователя" {
-                // TODO: сделать сервис IDisposible
-                let us = new UserService()
                 us.Registrate(idTelegramUser, newUser) |> ignore
                 us.Remove(idTelegramUser)
                 let gotUser = 
@@ -46,8 +41,6 @@ module UserServiceTest =
                 Expect.isNone gotUser "Пользователь удален"
             }
             test "Создание пользователя после его удаления" {
-                // TODO: сделать сервис IDisposible
-                let us = new UserService()
                 us.Registrate(idTelegramUser, newUser) |> ignore
                 us.Remove(idTelegramUser)
                 us.Registrate(idTelegramUser, newUser) |> ignore
